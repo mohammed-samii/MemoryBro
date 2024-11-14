@@ -1,19 +1,20 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 class ShowTile extends StatelessWidget {
   const ShowTile({
     super.key,
     required this.title,
-  required this.genre,
+    required this.genre,
     required this.mood,
-        this.showImage,
+    this.showImage, // This now accepts Uint8List?
   });
 
   final String title;
   final String genre;
   final String mood;
-  final String? showImage;
+  final Uint8List? showImage; // Changed to Uint8List?
 
   @override
   Widget build(BuildContext context) {
@@ -38,31 +39,37 @@ class ShowTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
               ),
               child: showImage != null
-                  ? FutureBuilder<bool>(
-                      future: File(showImage!).exists(),
-                      builder: (context, snapshot) {
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
-                            child: Image(
-                              image: FileImage(File(showImage!)),
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(
-                                  Icons.image,
-                                  color: Colors.white54,
-                                  size: 50,
-                                );
-                              },
-                            ),
-                          );
-                        
-                      },
-                    )
-                  : const Icon(
+                  ? (kIsWeb
+                  ? Image.memory( // Use Image.memory for Uint8List
+                showImage!,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.image,
+                    color: Colors.white54,
+                    size: 50,
+                  );
+                },
+              )
+                  : ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image.memory( // Use Image.memory for Uint8List
+                  showImage!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(
                       Icons.image,
                       color: Colors.white54,
                       size: 50,
-                    ),
+                    );
+                  },
+                ),
+              ))
+                  : const Icon(
+                Icons.image,
+                color: Colors.white54,
+                size: 50,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -73,7 +80,7 @@ class ShowTile extends StatelessWidget {
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
               ),
-              overflow: TextOverflow.ellipsis, // Prevent overflow text
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 2),
             Text(

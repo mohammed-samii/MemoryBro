@@ -14,7 +14,7 @@ class MovieTile extends StatelessWidget {
   final String title;
   final String genre;
   final String mood;
-  final String? movieImage;
+  final Uint8List? movieImage;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class MovieTile extends StatelessWidget {
               ),
               child: movieImage != null
                   ? (kIsWeb
-                  ? Image.network(
+                  ? Image.memory(
                 movieImage!,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
@@ -53,7 +53,7 @@ class MovieTile extends StatelessWidget {
                 },
               )
                   : FutureBuilder<bool>(
-                future: File(movieImage!).exists(),
+                future: File(movieImage! as String).exists(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -67,7 +67,7 @@ class MovieTile extends StatelessWidget {
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(6),
                       child: Image(
-                        image: FileImage(File(movieImage!)),
+                        image: MemoryImage(movieImage!),
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return const Icon(

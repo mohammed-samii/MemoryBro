@@ -60,7 +60,7 @@ class _AddWatchlistScreenState extends State<AddWatchlistScreen> {
         watchlistGenre: dropdownValue,
         watchlistMood: moodValue,
         watchlistAddedDate: DateTime.now(),
-        watchlistImage: '',
+        // watchlistImage = [],
         watchlistStatus: 'Incomplete',
       );
 

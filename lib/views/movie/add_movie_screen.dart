@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'dart:async';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:movie_watchlist/models/movie_model.dart';
 import 'package:movie_watchlist/services/movie_service.dart';
 // import 'package:movie_watchlist/services/views_service.dart';
@@ -19,18 +22,48 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
   final MovieService _movieService = MovieService();
   final ValueNotifier<String> dropdownValue = ValueNotifier<String>('Action');
   final ValueNotifier<String> moodValue = ValueNotifier<String>('😄');
-  File? _image;
+  Uint8List? image;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
 
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
+    try {
+      if (kIsWeb) {
+        // Web platform
+        Uint8List? pickedFile = await ImagePickerWeb.getImageAsBytes();
+        print('Image picked on web');
+
+        if (pickedFile != null) {
+          setState(() {
+            image = pickedFile;
+            print('Image picked and updated (web)');
+          });
+        } else {
+          print('No image selected on web');
+        }
+      } else {
+        // Mobile (Android/iOS)
+        final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+        print('Image picked on mobile');
+
+        if (pickedFile != null) {
+          final bytes = await File(pickedFile.path).readAsBytes();
+          print('Bytes read: ${bytes.length}');  // Debugging line
+
+          setState(() {
+            image = bytes;
+            print('Image picked and updated');
+          });
+        } else {
+          print('No image selected on mobile');
+        }
+      }
+    } catch (e) {
+      print('Error picking image: $e');
     }
   }
+
+
   @override
   void initState() {
     super.initState();
@@ -49,7 +82,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
     String year = _yearController.text.trim();
     String genre = dropdownValue.value;
     String mood = moodValue.value;
-    String? imagePath = _image?.path;
+    Uint8List imagePath = image!;
 
     if (name.isEmpty) {
       _showSnackbar('Please enter the movie name');
@@ -66,7 +99,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
       return;
     }
 
-    if (_image == null) {
+    if (image == null) {
       _showSnackbar('Please select an image');
       return;
     }
@@ -79,7 +112,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
       movieYear: int.parse(year),
       movieGenre: genre,
       movieMood: mood,
-      movieImage: imagePath!,
+      movieImage: imagePath,
       movieStatus: "Pending",
       isFavourite: false,
     );
@@ -145,11 +178,11 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                     decoration: BoxDecoration(
                       color: Colors.grey[900],
                       borderRadius: BorderRadius.circular(4),
-                      image: _image != null
-                          ? DecorationImage(image: FileImage(_image!), fit: BoxFit.cover)
+                      image: image != null
+                          ? DecorationImage(image: MemoryImage(image!), fit: BoxFit.cover)
                           : null,
                     ),
-                    child: _image == null
+                    child: image == null
                         ? const Icon(
                             Icons.image,
                             size: 40,

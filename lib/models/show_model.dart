@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:hive/hive.dart';
 
 part 'show_model.g.dart';
@@ -17,7 +19,7 @@ class Show extends HiveObject {
   String showMood; 
 
   @HiveField(4)
-  String showImage; 
+  Uint8List? showImage;
 
   @HiveField(5)
   int showYear;

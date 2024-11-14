@@ -21,7 +21,7 @@ class WatchlistAdapter extends TypeAdapter<Watchlist> {
       watchlistName: fields[1] as String,
       watchlistGenre: fields[2] as String,
       watchlistMood: fields[3] as String,
-      watchlistImage: fields[4] as String,
+      watchlistImage: fields[4] as Uint8List,
       watchlistAddedDate: fields[5] as DateTime,
       isFavourite: fields[6] as bool,
       watchlistStatus: fields[7] as String,

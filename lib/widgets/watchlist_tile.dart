@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:io' show File;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +8,12 @@ class WatchlistTile extends StatelessWidget {
     super.key,
     required this.watchlistname,
     this.mood,
-    this.itemImage,
+    this.itemImage, // This now accepts Uint8List?
   });
 
   final String watchlistname;
   final String? mood;
-  final String? itemImage;
+  final Uint8List? itemImage; // Changed to Uint8List?
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class WatchlistTile extends StatelessWidget {
               ),
               child: itemImage != null
                   ? (kIsWeb
-                  ? Image.network(
+                  ? Image.memory( // Use Image.memory for Uint8List
                 itemImage!,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
@@ -50,14 +51,11 @@ class WatchlistTile extends StatelessWidget {
                 },
               )
                   : FutureBuilder<bool>(
-                future: File(itemImage!).exists(),
+                future: File(itemImage.toString()).exists(),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return const Center(
-                        child: CircularProgressIndicator());
-                  } else if (snapshot.hasError ||
-                      !(snapshot.data ?? false)) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError || !(snapshot.data ?? false)) {
                     return const Icon(
                       Icons.image,
                       color: Colors.white54,
@@ -67,8 +65,8 @@ class WatchlistTile extends StatelessWidget {
                     // The file exists, so display the image
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(6),
-                      child: Image(
-                        image: FileImage(File(itemImage!)),
+                      child: Image.memory( // Use Image.memory for Uint8List
+                        itemImage!,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return const Icon(

@@ -618,7 +618,7 @@ Widget _buildItemGrid() {
     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: _getCrossAxisCount(context),
       crossAxisSpacing: 8,
-      mainAxisSpacing: 10,
+      mainAxisSpacing: 11,
       childAspectRatio: _getChildAspectRatio(context), // Adjust aspect ratio
     ),
     itemBuilder: (context, index) {

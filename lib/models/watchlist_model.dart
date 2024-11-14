@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:hive/hive.dart';
 
 part 'watchlist_model.g.dart'; // This part directive will include the generated code.
@@ -17,7 +19,7 @@ class Watchlist extends HiveObject {
   String watchlistMood; // Single mood as a string.
 
   @HiveField(4)
-  String watchlistImage; // Path to an image from one of the movies/shows.
+  Uint8List? watchlistImage; // Path to an image from one of the movies/shows.
 
   @HiveField(5)
   DateTime watchlistAddedDate;
@@ -42,7 +44,7 @@ class Watchlist extends HiveObject {
     required this.watchlistName,
     required this.watchlistGenre,
     required this.watchlistMood,
-    required this.watchlistImage,
+    this.watchlistImage,
     required this.watchlistAddedDate,
     required this.isFavourite,
     required this.watchlistStatus,

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:hive/hive.dart';
 import 'package:movie_watchlist/models/movie_model.dart';
 import 'package:movie_watchlist/models/show_model.dart';
@@ -17,7 +18,7 @@ Future<void> addWatchlist(Watchlist watchlist) async {
   final box = getWatchlistBox();
   watchlist.watchlistId = generateId(box);
 
-  String randomImage = _getRandomImageFromMoviesOrShows(watchlist);
+  Uint8List randomImage = _getRandomImageFromMoviesOrShows(watchlist);
   if (randomImage.isNotEmpty) {
     watchlist.watchlistImage = randomImage;
   }
@@ -32,17 +33,17 @@ List<Watchlist> getWatchlistsByMood(String mood) {
   }
 
 
-  String _getRandomImageFromMoviesOrShows(Watchlist watchlist) {
+  Uint8List _getRandomImageFromMoviesOrShows(Watchlist watchlist) {
     Random random = Random();
 
-    List<String> imageSources = [];
+    List<Uint8List> imageSources = [];
 
     if (watchlist.movieIds.isNotEmpty) {
       MovieService movieService = MovieService();
       for (int movieId in watchlist.movieIds) {
         Movie? movie = movieService.getMovieById(movieId);
-        if (movie != null) {
-          imageSources.add(movie.movieImage);
+        if (movie != null && movie.movieImage != null) {
+          imageSources.add(movie.movieImage!);
         }
       }
     }
@@ -51,8 +52,8 @@ List<Watchlist> getWatchlistsByMood(String mood) {
       ShowService showService = ShowService();
       for (int showId in watchlist.showIds) {
         Show? show = showService.getShowById(showId);
-        if (show != null) {
-          imageSources.add(show.showImage);
+        if (show != null && show.showImage != null) {
+          imageSources.add(show.showImage!);
         }
       }
     }
@@ -61,7 +62,7 @@ List<Watchlist> getWatchlistsByMood(String mood) {
       return imageSources[random.nextInt(imageSources.length)];
     }
 
-    return '';
+    return Uint8List(0);  // Return an empty Uint8List if no image found
   }
 
 Future<Watchlist?> getWatchlistById(int watchlistId) async {
@@ -129,7 +130,7 @@ Future<Watchlist?> getWatchlistById(int watchlistId) async {
   Future<void> updateWatchlist(Watchlist updatedWatchlist) async {
   final box = getWatchlistBox();
 
-  String randomImage = _getRandomImageFromMoviesOrShows(updatedWatchlist);
+  Uint8List randomImage = _getRandomImageFromMoviesOrShows(updatedWatchlist);
   if (randomImage.isNotEmpty) {
     updatedWatchlist.watchlistImage = randomImage;
   } 

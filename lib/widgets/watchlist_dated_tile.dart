@@ -1,4 +1,4 @@
-import 'dart:io' show File;
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -8,12 +8,12 @@ class WatchlistDatedTile extends StatelessWidget {
     super.key,
     required this.watchlistname,
     this.date,
-    this.itemImage,
+    this.itemImage, // Changed to Uint8List?
   });
 
   final String watchlistname;
   final DateTime? date;
-  final String? itemImage;
+  final Uint8List? itemImage; // Changed to Uint8List?
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class WatchlistDatedTile extends StatelessWidget {
               ),
               child: itemImage != null
                   ? (kIsWeb
-                  ? Image.network(
+                  ? Image.memory( // Use Image.memory for Uint8List
                 itemImage!,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
@@ -54,34 +54,19 @@ class WatchlistDatedTile extends StatelessWidget {
                   );
                 },
               )
-                  : FutureBuilder<bool>(
-                future: File(itemImage!).exists(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError || !(snapshot.data ?? false)) {
+                  : ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image.memory( // Use Image.memory for Uint8List
+                  itemImage!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
                     return const Icon(
                       Icons.image,
                       color: Colors.white54,
                       size: 50,
                     );
-                  } else {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: Image(
-                        image: FileImage(File(itemImage!)),
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
-                            Icons.image,
-                            color: Colors.white54,
-                            size: 50,
-                          );
-                        },
-                      ),
-                    );
-                  }
-                },
+                  },
+                ),
               ))
                   : const Icon(
                 Icons.image,

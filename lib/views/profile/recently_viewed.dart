@@ -99,6 +99,35 @@ class _RecentlyViewedScreenState extends State<RecentlyViewedScreen> {
     );
   }
 
+  // Helper to determine number of columns based on screen width
+  int _getCrossAxisCount(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth >= 1200) {
+      return 8; // Large screens
+    } else if (screenWidth >= 800) {
+      return 4; // Medium screens
+    } else if (screenWidth >= 600) {
+      return 2; // Small screens
+    } else {
+      return 1; // Extra small screens
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    int crossAxisCount = _getCrossAxisCount(context);
+    // Adjust aspect ratio based on the crossAxisCount for tile consistency
+    if (crossAxisCount == 4) {
+      return 0.8;
+    } else if (crossAxisCount == 3) {
+      return 0.75;
+    } else if (crossAxisCount == 2) {
+      return 0.7;
+    } else {
+      return 0.9; // for single column, allow more height for a "tile" look
+    }
+  }
+
+
   Widget _buildSection<T>(String title, Future<List<T>> futureList) {
     return FutureBuilder<List<T>>(
       future: futureList,
@@ -126,11 +155,11 @@ class _RecentlyViewedScreenState extends State<RecentlyViewedScreen> {
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: _getCrossAxisCount(context),
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio: 0.94,
+                  childAspectRatio: _getChildAspectRatio(context),
                 ),
                 itemCount: items.length,
                 itemBuilder: (context, index) {

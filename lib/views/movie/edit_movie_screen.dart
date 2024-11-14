@@ -1,6 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:movie_watchlist/models/movie_model.dart';
 import 'package:movie_watchlist/services/movie_service.dart';
 import 'package:movie_watchlist/services/views_service.dart';
@@ -43,7 +46,7 @@ class _EditMovieScreenState extends State<EditMovieScreen> {
   final TextEditingController _movieYearController = TextEditingController();
   String dropdownValue = 'Mixed';
   String movieMoodValue = '😄';
-  File? _image;
+  Uint8List? image; // Store image as Uint8List
 
   bool isFavorite = false;
 
@@ -142,14 +145,42 @@ class _EditMovieScreenState extends State<EditMovieScreen> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
+    try {
+      if (kIsWeb) {
+        // Web platform
+        Uint8List? pickedFile = await ImagePickerWeb.getImageAsBytes();
+        print('Image picked on web');
+
+        if (pickedFile != null) {
+          setState(() {
+            image = pickedFile;
+            print('Image picked and updated (web)');
+          });
+        } else {
+          print('No image selected on web');
+        }
+      } else {
+        // Mobile (Android/iOS)
+        final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+        print('Image picked on mobile');
+
+        if (pickedFile != null) {
+          final bytes = await File(pickedFile.path).readAsBytes();
+          print('Bytes read: ${bytes.length}');  // Debugging line
+
+          setState(() {
+            image = bytes;
+            print('Image picked and updated');
+          });
+        } else {
+          print('No image selected on mobile');
+        }
+      }
+    } catch (e) {
+      print('Error picking image: $e');
     }
   }
+
 
   void _updateMovie() async {
     if (movie != null) {
@@ -163,7 +194,7 @@ class _EditMovieScreenState extends State<EditMovieScreen> {
           movieMood: movieMoodValue,
           movieYear: int.parse(_movieYearController.text),
           movieStatus: 'pending',
-          movieImage: _image != null ? _image!.path : movie!.movieImage,
+          movieImage: image != null ? image! : movie!.movieImage,
           isFavourite: isFavorite);
 
           if (_nameController.text.isEmpty) {
@@ -181,7 +212,7 @@ class _EditMovieScreenState extends State<EditMovieScreen> {
       return;
     }
 
-    if (movie!.movieImage.isEmpty) {
+    if (movie!.movieImage == null) {
       _showSnackbar('Please select an image');
       return;
     }
@@ -275,21 +306,20 @@ class _EditMovieScreenState extends State<EditMovieScreen> {
                     decoration: BoxDecoration(
                       color: Colors.grey[900],
                       borderRadius: BorderRadius.circular(4),
-                      image: _image != null
+                      image: image != null
                           ? DecorationImage(
-                              image: FileImage(
-                                  _image!), // Show new image if picked
+                              image: MemoryImage(
+                                  image!), // Show new image if picked
                               fit: BoxFit.cover,
                             )
                           : movie?.movieImage != null
                               ? DecorationImage(
-                                  image: FileImage(File(movie!
-                                      .movieImage)), // Show existing image
+                                  image: MemoryImage(movie!.movieImage!), // Show existing image
                                   fit: BoxFit.cover,
                                 )
                               : null,
                     ),
-                    child: _image == null && movie?.movieImage == null
+                    child: image == null && movie?.movieImage == null
                         ? const Icon(
                             Icons.image,
                             size: 40,

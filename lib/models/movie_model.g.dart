@@ -21,7 +21,7 @@ class MovieAdapter extends TypeAdapter<Movie> {
       movieName: fields[1] as String,
       movieGenre: fields[2] as String,
       movieMood: fields[3] as String,
-      movieImage: fields[4] as String,
+      movieImage: fields[4] as Uint8List,
       movieYear: fields[5] as int,
       movieStatus: fields[6] as String,
       isFavourite: fields[7] as bool,

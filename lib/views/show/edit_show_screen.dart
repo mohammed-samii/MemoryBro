@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:movie_watchlist/models/show_model.dart';
 import 'package:movie_watchlist/services/show_service.dart';
 import 'package:movie_watchlist/services/views_service.dart';
@@ -49,7 +52,7 @@ class _EditShowScreenState extends State<EditShowScreen> {
   final TextEditingController _yearController = TextEditingController();
   String dropdownValue = 'Mixed';
   String moodValue = '😄';
-  File? _image;
+  Uint8List? image;
 
   @override
   void initState() {
@@ -132,12 +135,39 @@ class _EditShowScreenState extends State<EditShowScreen> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
+    try {
+      if (kIsWeb) {
+        // Web platform
+        Uint8List? pickedFile = await ImagePickerWeb.getImageAsBytes();
+        print('Image picked on web');
+
+        if (pickedFile != null) {
+          setState(() {
+            image = pickedFile;
+            print('Image picked and updated (web)');
+          });
+        } else {
+          print('No image selected on web');
+        }
+      } else {
+        // Mobile (Android/iOS)
+        final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+        print('Image picked on mobile');
+
+        if (pickedFile != null) {
+          final bytes = await File(pickedFile.path).readAsBytes();
+          print('Bytes read: ${bytes.length}');  // Debugging line
+
+          setState(() {
+            image = bytes;
+            print('Image picked and updated');
+          });
+        } else {
+          print('No image selected on mobile');
+        }
+      }
+    } catch (e) {
+      print('Error picking image: $e');
     }
   }
 
@@ -152,8 +182,8 @@ class _EditShowScreenState extends State<EditShowScreen> {
         showStatus: 'pending',
         showSeasons: int.parse(_seasonsController.text),
         showEpisodes: int.parse(_episodesController.text),
-        showImage: _image != null
-            ? _image!.path
+        showImage: image != null
+            ? image!
             : show!.showImage, // Update path if image is changed
         isFavourite: isFavorite,
       );
@@ -173,7 +203,7 @@ class _EditShowScreenState extends State<EditShowScreen> {
         return;
       }
 
-      if (show!.showImage.isEmpty) {
+      if (show!.showImage == null) {
         _showSnackbar('Please select an image');
         return;
       }
@@ -202,7 +232,7 @@ class _EditShowScreenState extends State<EditShowScreen> {
           int.parse(_yearController.text) != show!.showYear ||
           int.parse(_seasonsController.text) != show!.showSeasons ||
           int.parse(_episodesController.text) != show!.showEpisodes ||
-          (_image != null && _image!.path != show!.showImage)) {
+          (image != null && image! != show!.showImage)) {
         // Proceed to update only if any of the fields are changed
         await _showService.updateShow(updatedshow);
         setState(() {
@@ -297,21 +327,21 @@ class _EditShowScreenState extends State<EditShowScreen> {
                     decoration: BoxDecoration(
                       color: Colors.grey[900],
                       borderRadius: BorderRadius.circular(4),
-                      image: _image != null
+                      image: image != null
                           ? DecorationImage(
-                              image: FileImage(
-                                  _image!), // Show new image if picked
+                              image: MemoryImage(
+                                  image!), // Show new image if picked
                               fit: BoxFit.cover,
                             )
                           : show?.showImage != null
                               ? DecorationImage(
-                                  image: FileImage(File(
-                                      show!.showImage)), // Show existing image
+                                  image: MemoryImage(
+                                      show!.showImage!), // Show existing image
                                   fit: BoxFit.cover,
                                 )
                               : null,
                     ),
-                    child: _image == null && show?.showImage == null
+                    child: image == null && show?.showImage == null
                         ? const Icon(
                             Icons.image,
                             size: 40,

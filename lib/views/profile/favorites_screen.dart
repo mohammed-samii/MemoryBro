@@ -65,7 +65,52 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     _buildContent();
   }
 
-  // Widget to build a grid for watchlists
+// Helper to determine number of columns based on screen width
+  int _getCrossAxisCount(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth >= 1200) {
+      return 8; // Large screens
+    } else if (screenWidth >= 800) {
+      return 4; // Medium screens
+    } else if (screenWidth >= 600) {
+      return 2; // Small screens
+    } else {
+      return 1; // Extra small screens
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    int crossAxisCount = _getCrossAxisCount(context);
+    // Adjust aspect ratio based on the crossAxisCount for tile consistency
+    if (crossAxisCount == 4) {
+      return 0.8;
+    } else if (crossAxisCount == 3) {
+      return 0.75;
+    } else if (crossAxisCount == 2) {
+      return 0.7;
+    } else {
+      return 0.9; // for single column, allow more height for a "tile" look
+    }
+  }
+
+  // Generalized method to build item grids
+  Widget _buildItemGrid<T>(
+      {required List<T> items, required Widget Function(BuildContext, T) itemBuilder}) {
+    return GridView.builder(
+      itemCount: items.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: _getCrossAxisCount(context),
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 10,
+        childAspectRatio: _getChildAspectRatio(context), // Adjust aspect ratio
+      ),
+      itemBuilder: (context, index) {
+        return itemBuilder(context, items[index]);
+      },
+    );
+  }
+
+  // Watchlist Grid
   Widget _buildWatchlistGrid(List<Watchlist> watchlists) {
     if (watchlists.isEmpty) {
       return const Center(
@@ -76,14 +121,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         ),
       );
     }
-
     return _buildItemGrid(
       items: watchlists,
       itemBuilder: (context, item) => GestureDetector(
-        onTap: () {
-          // Navigate to watchlist edit screen
-          _navigateToEditWatchlist(item.watchlistId);
-        },
+        onTap: () => _navigateToEditWatchlist(item.watchlistId),
         child: WatchlistTile(
           watchlistname: item.watchlistName,
           mood: item.watchlistMood,
@@ -93,7 +134,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     );
   }
 
-  // Widget to build a grid for movies
+  // Movies Grid
   Widget _buildMoviesGrid(List<Movie> movies) {
     if (movies.isEmpty) {
       return const Center(
@@ -104,13 +145,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         ),
       );
     }
-
     return _buildItemGrid(
       items: movies,
       itemBuilder: (context, item) => GestureDetector(
-        onTap: () {
-          _navigateToEditMovie(item.movieId);
-        },
+        onTap: () => _navigateToEditMovie(item.movieId),
         child: MovieTile(
           title: item.movieName,
           genre: item.movieGenre,
@@ -121,7 +159,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     );
   }
 
-  // Widget to build a grid for shows
+  // Shows Grid
   Widget _buildShowsGrid(List<Show> shows) {
     if (shows.isEmpty) {
       return const Center(
@@ -132,13 +170,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         ),
       );
     }
-
     return _buildItemGrid(
       items: shows,
       itemBuilder: (context, item) => GestureDetector(
-        onTap: () {
-          _navigateToEditShow(item);
-        },
+        onTap: () => _navigateToEditShow(item),
         child: ShowTile(
           title: item.showName,
           genre: item.showGenre,
@@ -146,24 +181,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           showImage: item.showImage,
         ),
       ),
-    );
-  }
-
-  // Generic item grid builder
-  Widget _buildItemGrid<T>(
-      {required List<T> items,
-      required Widget Function(BuildContext, T) itemBuilder}) {
-    return GridView.builder(
-      itemCount: items.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 12,
-        childAspectRatio: 0.80,
-      ),
-      itemBuilder: (context, index) {
-        return itemBuilder(context, items[index]);
-      },
     );
   }
 

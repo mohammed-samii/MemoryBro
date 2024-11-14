@@ -57,6 +57,51 @@ class _SearchScreenState extends State<SearchScreen> {
     return results;
   }
 
+  int _getCrossAxisCount(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth >= 1200) {
+      return 8;
+    } else if (screenWidth >= 800) {
+      return 4;
+    } else if (screenWidth >= 600) {
+      return 2;
+    } else {
+      return 1;
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    int crossAxisCount = _getCrossAxisCount(context);
+    // Adjust aspect ratio based on the crossAxisCount for tile consistency
+    if (crossAxisCount == 4) {
+      return 0.8;
+    } else if (crossAxisCount == 3) {
+      return 0.75;
+    } else if (crossAxisCount == 2) {
+      return 0.7;
+    } else {
+      return 0.9; // for single column, allow more height for a "tile" look
+    }
+  }
+
+  void _navigateToEditMovie(int movieId) {
+    // Replace with actual navigation to movie edit page
+    Navigator.pushNamed(context, '/edit-movie', arguments: movieId);
+  }
+
+
+
+
+  void _navigateToEditShow(Show show) {
+    // Replace with actual navigation to show edit page
+    Navigator.pushNamed(context, '/edit-show', arguments: show);
+  }
+
+  void _navigateToWatchlistDetail(Watchlist watchlist) {
+    // Replace with actual navigation to watchlist detail page
+    Navigator.pushNamed(context, '/watchlist-detail', arguments: watchlist);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +124,6 @@ class _SearchScreenState extends State<SearchScreen> {
               },
               style: const TextStyle(color: Colors.white),
               decoration: const InputDecoration(
-
                 labelText: 'Search',
                 labelStyle: TextStyle(color: Colors.white, fontFamily: 'Poppins'),
                 border: OutlineInputBorder(
@@ -90,35 +134,44 @@ class _SearchScreenState extends State<SearchScreen> {
             const SizedBox(height: 16.0),
             Expanded(
               child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: _getCrossAxisCount(context),
                   crossAxisSpacing: 16.0,
                   mainAxisSpacing: 16.0,
-                  childAspectRatio: 0.90,
+                  childAspectRatio: _getChildAspectRatio(context),
                 ),
                 itemCount: _searchResults().length,
                 itemBuilder: (context, index) {
                   var item = _searchResults()[index];
 
                   if (item is Movie) {
-                    return MovieTile(
-                      title: item.movieName,
-                      genre :item.movieGenre,
-                      mood: item.movieMood,
-                      movieImage: item.movieImage,
+                    return GestureDetector(
+                      onTap: () => _navigateToEditMovie(item.movieId),
+                      child: MovieTile(
+                        title: item.movieName,
+                        genre: item.movieGenre,
+                        mood: item.movieMood,
+                        movieImage: item.movieImage,
+                      ),
                     );
                   } else if (item is Show) {
-                    return ShowTile(
-                      title: item.showName,
-                      genre :item.showGenre,
-                      mood: item.showMood,
-                      showImage: item.showImage,
+                    return GestureDetector(
+                      onTap: () => _navigateToEditShow(item),
+                      child: ShowTile(
+                        title: item.showName,
+                        genre: item.showGenre,
+                        mood: item.showMood,
+                        showImage: item.showImage,
+                      ),
                     );
                   } else if (item is Watchlist) {
-                    return WatchlistTile(
-                      watchlistname: item.watchlistName,
-                      mood: item.watchlistMood,
-                      itemImage: item.watchlistImage,
+                    return GestureDetector(
+                      onTap: () => _navigateToWatchlistDetail(item),
+                      child: WatchlistTile(
+                        watchlistname: item.watchlistName,
+                        mood: item.watchlistMood,
+                        itemImage: item.watchlistImage,
+                      ),
                     );
                   }
 

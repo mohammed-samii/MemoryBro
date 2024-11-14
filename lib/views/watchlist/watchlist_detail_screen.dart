@@ -360,11 +360,11 @@ class _WatchlistDetailScreenState extends State<WatchlistDetailScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return PreferredSize(
-      preferredSize: Size.fromHeight(kIsWeb ? 100 : 60),
+      preferredSize: Size.fromHeight(kIsWeb ? 70 : 60),
       child: AppBar(
         foregroundColor: Colors.white,
         title: Padding(
-          padding: const EdgeInsets.only(top: kIsWeb ? 50 : 40), // Adjust horizontal padding
+          padding: const EdgeInsets.only(top: kIsWeb ? 30 : 40), // Adjust horizontal padding
           child: isSearchMode ? _buildSearchField() : _buildTitle(),
         ),
         leading: Padding(
@@ -612,22 +612,48 @@ Widget _buildItemGrid() {
     );
   }
 
-  return 
-      GridView.builder(
-        shrinkWrap: true,
-        itemCount: combinedItems.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 10,
-          childAspectRatio: 0.80,
-        ),
-        itemBuilder: (context, index) {
-          return _buildGridItem(combinedItems[index]);
-        },
-      );
-    
+  return GridView.builder(
+    itemCount: combinedItems.length,
+    padding: const EdgeInsets.all(8.0), // Padding around the grid
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: _getCrossAxisCount(context),
+      crossAxisSpacing: 8,
+      mainAxisSpacing: 10,
+      childAspectRatio: _getChildAspectRatio(context), // Adjust aspect ratio
+    ),
+    itemBuilder: (context, index) {
+      return _buildGridItem(combinedItems[index]);
+    },
+  );
 }
+
+  int _getCrossAxisCount(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth >= 1200) {
+      return 8;
+    } else if (screenWidth >= 800) {
+      return 4;
+    } else if (screenWidth >= 600) {
+      return 2;
+    } else {
+      return 1;
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    int crossAxisCount = _getCrossAxisCount(context);
+    // Adjust aspect ratio based on the crossAxisCount for tile consistency
+    if (crossAxisCount == 4) {
+      return 0.8;
+    } else if (crossAxisCount == 3) {
+      return 0.75;
+    } else if (crossAxisCount == 2) {
+      return 0.7;
+    } else {
+      return 0.9; // for single column, allow more height for a "tile" look
+    }
+  }
+
 
   Widget _buildGridItem(dynamic item) {
     if (item is Movie) {

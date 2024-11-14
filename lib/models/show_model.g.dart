@@ -21,7 +21,7 @@ class ShowAdapter extends TypeAdapter<Show> {
       showName: fields[1] as String,
       showGenre: fields[2] as String,
       showMood: fields[3] as String,
-      showImage: fields[4] as String,
+      showImage: fields[4] as Uint8List,
       showYear: fields[5] as int,
       showStatus: fields[6] as String,
       showSeasons: fields[7] as int,

@@ -89,6 +89,9 @@ class _SearchScreenState extends State<SearchScreen> {
     Navigator.pushNamed(context, '/edit-movie', arguments: movieId);
   }
 
+
+
+
   void _navigateToEditShow(Show show) {
     // Replace with actual navigation to show edit page
     Navigator.pushNamed(context, '/edit-show', arguments: show);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_watchlist/models/watchlist_model.dart';
+import 'package:movie_watchlist/root_views/watchlist/widgets/watchlist_dated_tile.dart';
 import 'package:movie_watchlist/services/watchlist_service.dart';
-import 'package:movie_watchlist/widgets/watchlist_dated_tile.dart';
 
 class ViewWatchlistScreen extends StatefulWidget {
   const ViewWatchlistScreen({super.key});

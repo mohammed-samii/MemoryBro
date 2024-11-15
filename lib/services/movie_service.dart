@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:movie_watchlist/services/watchlist_service.dart';
 import '../models/movie_model.dart';
 
 class MovieService {

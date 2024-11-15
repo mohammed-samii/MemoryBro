@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:movie_watchlist/views/watchlist/view_watchlist_and_add.dart';
-import 'package:movie_watchlist/views/emoji/emoji_based.dart';
-import 'package:movie_watchlist/views/home/home_screen.dart';
-import 'package:movie_watchlist/views/profile/profile_screen.dart';
-import 'package:movie_watchlist/widgets/bottom_navigation.dart';
+import 'package:movie_watchlist/root_views/emoji/views/emoji_based.dart';
+import 'package:movie_watchlist/root_views/home/views/home_screen.dart';
+import 'package:movie_watchlist/root_views/home/widgets/bottom_navigation.dart';
+import 'package:movie_watchlist/root_views/profile/views/profile_screen.dart';
+import 'package:movie_watchlist/root_views/watchlist/views/view_watchlist_and_add.dart';
+
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

@@ -7,8 +7,8 @@ import 'package:image_picker_web/image_picker_web.dart';
 import 'package:movie_watchlist/models/movie_model.dart';
 import 'package:movie_watchlist/services/movie_service.dart';
 import 'package:movie_watchlist/services/views_service.dart';
-import 'package:movie_watchlist/widgets/dropdown.dart';
-import 'package:movie_watchlist/widgets/textfield.dart';
+import 'package:movie_watchlist/shared_widgets/dropdown.dart';
+import 'package:movie_watchlist/shared_widgets/textfield.dart';
 
 class EditMovieScreen extends StatefulWidget {
   const EditMovieScreen({super.key});

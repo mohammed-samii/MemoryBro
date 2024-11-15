@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_watchlist/services/user_service.dart';
-import 'package:movie_watchlist/widgets/update_user.dart';
+import 'package:movie_watchlist/shared_widgets/update_user.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

@@ -5,8 +5,9 @@ import 'package:movie_watchlist/models/show_model.dart';
 import 'package:movie_watchlist/models/watchlist_model.dart';
 import 'package:movie_watchlist/services/views_service.dart';
 import 'package:movie_watchlist/services/watchlist_service.dart';
-import 'package:movie_watchlist/widgets/movie_tile.dart';
-import 'package:movie_watchlist/widgets/show_tile.dart';
+import 'package:movie_watchlist/shared_widgets/movie_tile.dart';
+import 'package:movie_watchlist/shared_widgets/show_tile.dart';
+
 
 class WatchlistDetailScreen extends StatefulWidget {
   const WatchlistDetailScreen({super.key});

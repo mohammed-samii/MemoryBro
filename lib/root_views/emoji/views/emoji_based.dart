@@ -5,9 +5,10 @@ import 'package:movie_watchlist/models/watchlist_model.dart';
 import 'package:movie_watchlist/services/movie_service.dart';
 import 'package:movie_watchlist/services/show_service.dart';
 import 'package:movie_watchlist/services/watchlist_service.dart';
-import 'package:movie_watchlist/widgets/movie_tile.dart';
-import 'package:movie_watchlist/widgets/show_tile.dart';
-import 'package:movie_watchlist/widgets/watchlist_tile.dart';
+import 'package:movie_watchlist/shared_widgets/movie_tile.dart';
+import 'package:movie_watchlist/shared_widgets/show_tile.dart';
+import 'package:movie_watchlist/shared_widgets/watchlist_tile.dart';
+
 
 class EmojiScreen extends StatefulWidget {
   const EmojiScreen({super.key});

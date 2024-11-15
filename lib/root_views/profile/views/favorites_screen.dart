@@ -4,10 +4,10 @@ import 'package:movie_watchlist/services/movie_service.dart';
 import 'package:movie_watchlist/services/show_service.dart';
 import 'package:movie_watchlist/services/watchlist_service.dart';
 import 'package:movie_watchlist/models/movie_model.dart'; // Import your movie model
-import 'package:movie_watchlist/models/show_model.dart'; // Import your show model
-import 'package:movie_watchlist/widgets/movie_tile.dart'; // Import your MovieTile widget
-import 'package:movie_watchlist/widgets/show_tile.dart';
-import 'package:movie_watchlist/widgets/watchlist_tile.dart'; // Import your ShowTile widget
+import 'package:movie_watchlist/models/show_model.dart';
+import 'package:movie_watchlist/shared_widgets/movie_tile.dart';
+import 'package:movie_watchlist/shared_widgets/show_tile.dart';
+import 'package:movie_watchlist/shared_widgets/watchlist_tile.dart'; // Import your show model
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});

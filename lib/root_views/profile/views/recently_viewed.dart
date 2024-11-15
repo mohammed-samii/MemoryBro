@@ -3,9 +3,9 @@ import 'package:movie_watchlist/models/movie_model.dart';
 import 'package:movie_watchlist/models/show_model.dart';
 import 'package:movie_watchlist/models/watchlist_model.dart';
 import 'package:movie_watchlist/services/views_service.dart';
-import 'package:movie_watchlist/widgets/movie_tile.dart';
-import 'package:movie_watchlist/widgets/show_tile.dart';
-import 'package:movie_watchlist/widgets/watchlist_tile.dart';
+import 'package:movie_watchlist/shared_widgets/movie_tile.dart';
+import 'package:movie_watchlist/shared_widgets/show_tile.dart';
+import 'package:movie_watchlist/shared_widgets/watchlist_tile.dart';
 
 class RecentlyViewedScreen extends StatefulWidget {
   const RecentlyViewedScreen({super.key});

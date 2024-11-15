@@ -1,9 +1,10 @@
 // Movie Section Widget
 import 'package:flutter/material.dart';
+import 'package:movie_watchlist/root_views/watchlist/views/full_list_screen.dart';
 import 'package:movie_watchlist/services/movie_service.dart';
 import 'package:movie_watchlist/services/show_service.dart';
-import 'package:movie_watchlist/views/watchlist/full_list_screen.dart';
-import 'package:movie_watchlist/widgets/items_builder.dart';
+import 'package:movie_watchlist/shared_widgets/items_builder.dart';
+
 
 class MovieSection extends StatefulWidget {
   final List<int> movieIds;

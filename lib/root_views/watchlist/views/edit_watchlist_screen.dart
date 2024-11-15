@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:movie_watchlist/models/watchlist_model.dart';
 import 'package:movie_watchlist/services/watchlist_service.dart';
-import 'package:movie_watchlist/widgets/dropdown.dart';
-import 'package:movie_watchlist/widgets/section_builder.dart';
-import 'package:movie_watchlist/widgets/textfield.dart';
+import 'package:movie_watchlist/shared_widgets/dropdown.dart';
+import 'package:movie_watchlist/shared_widgets/section_builder.dart';
+import 'package:movie_watchlist/shared_widgets/textfield.dart';
+
 
 class EditWatchlistScreen extends StatefulWidget {
   const EditWatchlistScreen({super.key});
